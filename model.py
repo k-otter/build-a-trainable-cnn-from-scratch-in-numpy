@@ -59,8 +59,15 @@ def exp_shifted(logits):
     shifted = logits - max
     return np.exp(shifted)
 
-# Step 5 - stable_softmax (not yet solved)
-# TODO: implement
+# Step 5 - stable_softmax
+def stable_softmax(logits):
+    # TODO: Compute a numerically stable softmax row-wise over (N, C) logits.
+    es = exp_shifted(logits)
+    es_sum = np.sum(es, axis=1)
+    sm = np.zeros(logits.shape, dtype=es.dtype)
+    for ind, row in enumerate(es):
+        sm[ind] = row/es_sum[ind]
+    return sm
 
 # Step 6 - one_hot (not yet solved)
 # TODO: implement
