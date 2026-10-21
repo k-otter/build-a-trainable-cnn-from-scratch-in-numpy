@@ -49,8 +49,15 @@ def row_sum(matrix):
         sums[ind] = np.sum(row)
     return sums
 
-# Step 4 - exp_shifted (not yet solved)
-# TODO: implement
+# Step 4 - exp_shifted
+import numpy as np
+
+def exp_shifted(logits):
+    """Subtract per-row max from logits and exponentiate elementwise."""
+    # TODO: shift each row of logits by its max and return elementwise exp
+    max = row_max(logits)
+    shifted = logits - max
+    return np.exp(shifted)
 
 # Step 5 - stable_softmax (not yet solved)
 # TODO: implement
