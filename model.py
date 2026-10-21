@@ -38,8 +38,16 @@ def row_max(matrix):
 
     return maxs
 
-# Step 3 - row_sum (not yet solved)
-# TODO: implement
+# Step 3 - row_sum
+import numpy as np
+
+def row_sum(matrix):
+    """Return per-row sums of a 2D array with shape (N, 1)."""
+    # TODO: return the sum along axis 1 keeping the reduced dimension
+    sums = np.zeros([matrix.shape[0], 1], dtype=matrix.dtype)
+    for ind, row in enumerate(matrix):
+        sums[ind] = np.sum(row)
+    return sums
 
 # Step 4 - exp_shifted (not yet solved)
 # TODO: implement
