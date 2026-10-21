@@ -21,8 +21,22 @@ def argmax_rows(matrix):
 
     return max_inds
 
-# Step 2 - row_max (not yet solved)
-# TODO: implement
+# Step 2 - row_max
+import numpy as np
+
+def row_max(matrix):
+    # TODO: return the index of the largest element in each row of a 2D array
+    maxs = np.zeros([matrix.shape[0], 1], dtype=matrix.dtype)
+    for pos, rows in enumerate(matrix):
+        max_val = rows[0]
+        max_ind = 0
+        for ind, val in enumerate(rows[1:], start=1):
+            if val > max_val:
+                max_val = val
+                max_ind = ind
+        maxs[pos] = max_val
+
+    return maxs
 
 # Step 3 - row_sum (not yet solved)
 # TODO: implement
