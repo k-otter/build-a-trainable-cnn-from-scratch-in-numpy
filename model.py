@@ -77,8 +77,13 @@ def one_hot(labels, num_classes):
         hot[ind, val] = 1.0
     return hot
 
-# Step 7 - gather_true_class_probs (not yet solved)
-# TODO: implement
+# Step 7 - gather_true_class_probs
+def gather_true_class_probs(probs, labels):
+    # TODO: return probs[i, labels[i]] for every row i as a 1D length-N array.
+    true_probs = np.zeros(labels.shape, dtype=probs.dtype)
+    for ind, row in enumerate(probs):
+        true_probs[ind] = row[labels[ind]]
+    return true_probs
 
 # Step 8 - cross_entropy_loss (not yet solved)
 # TODO: implement
