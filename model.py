@@ -106,8 +106,10 @@ def accuracy(logits_or_probs, labels):
     acc = acc/len(labels)
     return acc
 
-# Step 10 - he_std (not yet solved)
-# TODO: implement
+# Step 10 - he_std
+def he_std(fan_in):
+    # TODO: return the He initialization standard deviation sqrt(2 / fan_in).
+    return (2/fan_in)**0.5
 
 # Step 11 - he_init (not yet solved)
 # TODO: implement
