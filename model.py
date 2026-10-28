@@ -162,8 +162,31 @@ def im2col(images, kernel_h, kernel_w, stride, padding):
     patches = patches.reshape(-1, pad_img.shape[1]*kernel_w*kernel_h)
     return patches
 
-# Step 16 - col2im (not yet solved)
-# TODO: implement
+# Step 16 - col2im
+def col2im(cols, input_shape, kernel_h, kernel_w, stride=1, padding=0):
+    N, C, H, W = input_shape
+    out_h = output_spatial_size(H, kernel_h, stride, padding)
+    out_w = output_spatial_size(W, kernel_w, stride, padding)
+
+    # Padded buffer to accumulate into
+    H_pad, W_pad = H + 2 * padding, W + 2 * padding
+    img_pad = np.zeros((N, C, H_pad, W_pad), dtype=cols.dtype)
+
+    # (N*out_h*out_w, C*kh*kw) -> (N, C, kh, kw, out_h, out_w)
+    cols_reshaped = cols.reshape(N, out_h, out_w, C, kernel_h, kernel_w)
+    cols_reshaped = cols_reshaped.transpose(0, 3, 4, 5, 1, 2)
+
+    # Loop over kernel offsets (small), vectorized over everything else
+    for ky in range(kernel_h):
+        y_max = ky + stride * out_h
+        for kx in range(kernel_w):
+            x_max = kx + stride * out_w
+            img_pad[:, :, ky:y_max:stride, kx:x_max:stride] += cols_reshaped[:, :, ky, kx, :, :]
+
+    # Strip padding
+    if padding > 0:
+        return img_pad[:, :, padding:padding + H, padding:padding + W]
+    return img_pad
 
 # Step 17 - conv2d_forward (not yet solved)
 # TODO: implement
