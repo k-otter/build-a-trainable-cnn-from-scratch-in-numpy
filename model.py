@@ -159,6 +159,8 @@ def im2col(images, kernel_h, kernel_w, stride, padding):
                     #print(pad_img[n, c, stride*i:kernel_h+stride*i, stride*j:kernel_w+stride*j])
                     patches[n, c, i, j, :] = pad_img[n, c, stride*i:kernel_h+stride*i, stride*j:kernel_w+stride*j].flatten()
                     #print(patches[n, c, i, j, :])
+                    
+    patches = patches.transpose(0, 2, 3, 1, 4)   # (N, out_i, out_j, C, kh*kw)
     patches = patches.reshape(-1, pad_img.shape[1]*kernel_w*kernel_h)
     return patches
 
@@ -188,8 +190,24 @@ def col2im(cols, input_shape, kernel_h, kernel_w, stride=1, padding=0):
         return img_pad[:, :, padding:padding + H, padding:padding + W]
     return img_pad
 
-# Step 17 - conv2d_forward (not yet solved)
-# TODO: implement
+# Step 17 - conv2d_forward
+def conv2d_forward(x, weights, bias, stride, padding):
+    # TODO: convolve x with weights using im2col, add bias, return output and a backprop cache.
+    cache = {}
+    cols = im2col(x, weights.shape[2], weights.shape[3], stride=stride, padding=padding)
+    kh = weights.shape[2]
+    kw = weights.shape[3]
+    weights_re = weights.reshape(weights.shape[0], -1)
+    y = cols@weights_re.T+bias
+    h_prime = output_spatial_size(x.shape[2], kernel=kh, stride=stride, padding=padding)
+    w_prime = output_spatial_size(x.shape[3], kernel=kw, stride=stride, padding=padding)
+
+    y = y.reshape(x.shape[0], h_prime, w_prime, weights_re.shape[0])
+    #print(y)
+    y = np.moveaxis(y, -1, 1)
+    cache['cols'], cache['kernel_h'], cache['kernel_w'], cache['padding'], cache['stride'], cache['weights'], cache['x_shape'] = cols, kh, kw, padding, stride, weights, x.shape
+    #['cols', 'kernel_h', 'kernel_w', 'padding', 'stride', 'weights', 'x_shape']
+    return y, cache
 
 # Step 18 - conv2d_grad_input (not yet solved)
 # TODO: implement
