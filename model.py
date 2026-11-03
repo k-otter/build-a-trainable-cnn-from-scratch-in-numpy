@@ -227,8 +227,16 @@ def conv2d_grad_input(d_out, cache):
     # Fold back to image layout, accumulating overlapping patches
     return col2im(d_cols, x_shape, kernel_h, kernel_w, stride, padding)
 
-# Step 19 - conv2d_grad_weights (not yet solved)
-# TODO: implement
+# Step 19 - conv2d_grad_weights
+def conv2d_grad_weights(d_out, cache):
+    # TODO: return dL/dW shaped (C_out, C_in, kH, kW) from d_out and the im2col cache.
+    kw, kh = cache['kernel_w'], cache['kernel_h']
+    C_out = d_out.shape[1]
+    cols = cache['cols']
+    d_out = d_out.transpose(1, 0, 2, 3).reshape(C_out, -1)
+    dldw = d_out@cols
+    dldw = dldw.reshape(C_out, -1, kh, kw)
+    return dldw
 
 # Step 20 - conv2d_grad_bias (not yet solved)
 # TODO: implement
