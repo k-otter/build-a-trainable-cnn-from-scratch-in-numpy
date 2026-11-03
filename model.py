@@ -209,8 +209,38 @@ def conv2d_forward(x, weights, bias, stride, padding):
     #['cols', 'kernel_h', 'kernel_w', 'padding', 'stride', 'weights', 'x_shape']
     return y, cache
 
-# Step 18 - conv2d_grad_input (not yet solved)
-# TODO: implement
+# Step 18 - conv2d_grad_input
+def conv2d_grad_input(d_out, cache):
+    """
+    Gradient of the loss w.r.t. the convolution input.
+
+    Parameters
+    ----------
+    d_out    : (N, C_out, H_out, W_out) upstream gradient
+    weights  : (C_out, C_in, kernel_h, kernel_w) cached from forward pass
+    x_shape  : (N, C_in, H, W) shape of the original input
+    stride, padding, kernel_h, kernel_w : conv hyperparameters from forward pass
+
+    Returns
+    -------
+    d_x : (N, C_in, H, W)
+    """
+    weights, x_shape, stride, padding, kernel_h, kernel_w = cache['weights'], cache['x_shape'], cache['stride'], cache['padding'], cache['kernel_h'], cache['kernel_w']
+    C_out = weights.shape[0]
+
+    # (C_out, C_in*kH*kW)
+    w_flat = weights.reshape(C_out, -1)
+
+    # (N, C_out, H_out, W_out) -> (C_out, N*H_out*W_out)
+    d_out_flat = d_out.transpose(1, 0, 2, 3).reshape(C_out, -1)
+
+    # Gradient w.r.t. the im2col matrix: (C_in*kH*kW, N*H_out*W_out)
+    d_cols = w_flat.T @ d_out_flat
+
+    # Fold columns back into image layout, summing overlapping patches
+    d_x = col2im(d_cols, x_shape, kernel_h, kernel_w, stride, padding)
+
+    return d_x
 
 # Step 19 - conv2d_grad_weights (not yet solved)
 # TODO: implement
